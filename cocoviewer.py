@@ -86,7 +86,7 @@ def parse_coco(annotations_file: str) -> tuple:
     """Parses COCO json annotation file.
     """
     instances = load_annotations(annotations_file)
-    images = get_images(instances)
+    images = sorted(get_images(instances), key=lambda x: x[1])
     categories = get_categories(instances)
     return instances, images, categories
 
