@@ -160,7 +160,13 @@ def draw_bboxes(draw, objects, labels, obj_categories, ignore, width, label_size
 
             if labels:
                 text = c[0]
-                font = ImageFont.truetype("DejaVuSans.ttf", size=label_size)
+                # FIXME: This Windows font fix results in label text size no longer being resizable
+                try:
+                    # For Linux
+                    font = ImageFont.truetype("DejaVuSans.ttf", size=label_size)
+                except OSError:
+                    # For others
+                    font = ImageFont.load_default()
 
                 tw, th = draw.textsize(text, font)
                 tx0 = b[0]
@@ -179,7 +185,7 @@ def draw_bboxes(draw, objects, labels, obj_categories, ignore, width, label_size
                     tx1 = tw if tx0 == 0 else b[2]
 
                 draw.rectangle((tx0, ty0, tx1, ty1), fill=c[-1])
-                draw.text((tx0, ty0), text, (255, 255, 255), font=font)
+                draw.text((tx0, ty0), text, (255, 255, 255), font=font, size=label_size)
 
 
 def draw_masks(draw, objects, obj_categories, ignore, alpha):
