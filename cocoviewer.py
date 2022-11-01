@@ -153,13 +153,26 @@ def draw_bboxes(draw, objects, labels, obj_categories, ignore, width, label_size
                obj["bbox"][1],
                obj["bbox"][0] + obj["bbox"][2],
                obj["bbox"][1] + obj["bbox"][3]] for obj in objects]
+    try:
+        total_damages = [obj["damage"] for obj in objects]
+        damages = [[obj["sector_damage"][0],
+                    obj["sector_damage"][1],
+                    obj["sector_damage"][2],
+                    obj["sector_damage"][3]] for obj in objects]
+    except:
+        total_damages = None
+        damages = None
     # Draw bboxes
     for i, (c, b) in enumerate(zip(obj_categories, bboxes)):
         if i not in ignore:
             draw.rectangle(b, outline=c[-1], width=width)
 
             if labels:
-                text = c[0]
+                if total_damages is None or damages is None:
+                    text = c[0]
+                else:
+                    text = (f"{c[0]} {total_damages[i]:.3f}\n{damages[i][0]:.3f} "
+                            f"{damages[i][1]:.3f}\n{damages[i][2]:.3f} {damages[i][3]:.3f}")
                 # FIXME: This Windows font fix results in label text size no longer being resizable
                 try:
                     # For Linux
